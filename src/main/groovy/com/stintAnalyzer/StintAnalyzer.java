@@ -4,6 +4,7 @@ import com.stintAnalyzer.dto.live.LiveData;
 import com.stintAnalyzer.dto.session.Session;
 import com.stintAnalyzer.dto.stint.Stint;
 import com.stintAnalyzer.processor.StintProcessor;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
@@ -20,8 +21,14 @@ import static com.stintAnalyzer.utils.Parser.parseSessionFile;
 
 public class StintAnalyzer
 {
+//	@Value("${sessionStrFilePath}")
+//	String sesssionStrFilePath; // = "C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt"
+//	@Value("${liveStrFilePath}")
+//	String liveStrFilePath; // = "C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt"
+
 	public static void main(String[] args)
 	{
+
 //		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk 1.15\\irsdk\\irsdk_lapTiming\\sessionStr.txt");
 		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk 1.15\\irsdk\\irsdk_lapTiming\\sessionStr Example.txt");
 //		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk 1.15\\irsdk\\irsdk_lapTiming\\liveStr.txt");
