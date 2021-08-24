@@ -38,7 +38,7 @@ public class StintProcessor
 		}
 
 		int liveDataLastCompletedLap = liveData.getCarStatus().getCars().get(session.getDriverInfo().getDriverCarIdx()).getCarIdxLapCompleted();
-		Float liveDataLastLapTime = liveData.getCarStatus().getCars().get(session.getDriverInfo().getDriverCarIdx()).getCarIdxLastLapTime();
+		float liveDataLastLapTime = liveData.getCarStatus().getCars().get(session.getDriverInfo().getDriverCarIdx()).getCarIdxLastLapTime();
 
 		// if a lap was completed, add lap to the stint and check to see if the stint has been completed
 		if (lastCompletedLap == -1)
@@ -70,12 +70,18 @@ public class StintProcessor
 		else if (liveDataLastCompletedLap == lastCompletedLap + 1)
 		{
 			System.out.println("different lap but -1 for last lap time");
+			lastCompletedLap = liveDataLastCompletedLap;
 		}
 		// if the lap is two or more laps ahead or one behind, reset the stint
 		else if (liveDataLastCompletedLap != lastCompletedLap)
 		{
 			System.out.println("Lap is two or more laps ahead or one behind. Stint reset");
 			initializeStint(session, liveData);
+		}
+		// stint process is caught up to the current lap
+		else
+		{
+			System.out.println("liveDataLastCompletedLap == lastCompletedLap");
 		}
 
 		return false;
