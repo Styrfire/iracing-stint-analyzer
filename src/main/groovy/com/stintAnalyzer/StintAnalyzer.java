@@ -28,11 +28,10 @@ public class StintAnalyzer
 
 	public static void main(String[] args)
 	{
-
-//		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk 1.15\\irsdk\\irsdk_lapTiming\\sessionStr.txt");
-		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk 1.15\\irsdk\\irsdk_lapTiming\\sessionStr Example.txt");
-//		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk 1.15\\irsdk\\irsdk_lapTiming\\liveStr.txt");
-		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk 1.15\\irsdk\\irsdk_lapTiming\\liveStr Example.txt");
+		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt");
+//		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr Example.txt");
+		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\liveStr.txt");
+//		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\liveStr Example.txt");
 		FileWatcher sessionStrFileWatcher;
 		FileWatcher liveStrFileWatcher;
 
@@ -95,13 +94,13 @@ public class StintAnalyzer
 		}
 
 		StintProcessor stintProcessor = new StintProcessor();
-		stintProcessor.progressStint(currSession, currLiveData);
+		stintProcessor.initializeStint(currSession, currLiveData);
 
 		// check for file updates and process the changes
 		long lastSec = 0;
 		while (true)
 		{
-			long sec = System.currentTimeMillis() / 1000;
+			long sec = System.currentTimeMillis() / 5000;
 			if (sec != lastSec) {
 				boolean fileChanged = false;
 				if (liveStrFileWatcher.fileChanged())
@@ -131,7 +130,7 @@ public class StintAnalyzer
 					}
 
 				//code to run
-				System.out.println("I'm running every second!");
+//				System.out.println("I'm running every second!");
 
 				lastSec = sec;
 			}
