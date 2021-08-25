@@ -16,7 +16,7 @@ public class Parser
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		Session session = null;
+		Session session;
 
 		try
 		{
@@ -39,16 +39,23 @@ public class Parser
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		LiveData liveData = null;
 
-		try
-		{
-			liveData = mapper.readValue(file, LiveData.class);
+		int tries = 1;
+		int maxRetryAttempts = 3;
+		do {
+			try
+			{
+				liveData = mapper.readValue(file, LiveData.class);
+				break;
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				System.out.println("Something went wrong parsing the session file!");
+				System.out.println("Retry attempt " + tries + " of " + maxRetryAttempts);
+				tries++;
+			}
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.out.println("Something went wrong parsing the session file!");
-			return null;
-		}
+		while (tries <= maxRetryAttempts);
 
 		return liveData;
 	}
