@@ -4,6 +4,7 @@ import com.stintAnalyzer.dto.live.LiveData;
 import com.stintAnalyzer.dto.session.Session;
 import com.stintAnalyzer.dto.stint.Stint;
 import com.stintAnalyzer.processor.StintProcessor;
+import com.stintAnalyzer.ui.Console;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.swing.*;
@@ -46,45 +47,10 @@ public class StintAnalyzer
 			return;
 		}
 
-		// Scheduled executor in new thread implementation
-//		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-//
-//		ses.scheduleAtFixedRate(new Runnable()
-//		{
-//			@Override
-//			public void run()
-//			{
-//				if (sessionStrFileWatcher.fileChanged())
-//					System.out.println("I'm running every second!");
-//			}
-//		}, 0, 1, TimeUnit.SECONDS);
+		Console console = new Console();
+		console.showConsole();
 
-		// Create JFrame and use it to exit the program
-		JFrame frame = new JFrame("iRacing Stint Analyzer");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		WindowListener listener = new WindowAdapter()
-		{
-			public void windowClosing(WindowEvent event)
-			{
-				Frame frame = (Frame) event.getSource();
-				System.out.println("Closing " + frame.getTitle());
-				// Scheduled executor in new thread implementation
-//				ses.shutdown();
-				System.exit(0);
-			}
-		};
-		Container container = frame.getContentPane();
-		JTextPane pane = new JTextPane();
-		SimpleAttributeSet attributeSet = new SimpleAttributeSet();
-		StyleConstants.setForeground(attributeSet, Color.black);
-		pane.setCharacterAttributes(attributeSet, true);
-		pane.setText("Close this window to stop iRacing Stint Analyzer!");
-		container.add(pane, BorderLayout.CENTER);
-		frame.setSize(400, 80);
-		frame.addWindowListener(listener);
-		frame.setVisible(true);
-
-		// Get starting session and live data
+		// get starting session and live data
 		Session currSession = parseSessionFile(sessionStrFile);
 		LiveData currLiveData = parseLiveDataFile(liveStrFile);
 		if (currSession == null || currLiveData == null)
@@ -93,6 +59,7 @@ public class StintAnalyzer
 			System.exit(2);
 		}
 
+		// initialize the stint
 		StintProcessor stintProcessor = new StintProcessor();
 		stintProcessor.initializeStint(currSession, currLiveData);
 
@@ -128,9 +95,6 @@ public class StintAnalyzer
 						Stint stint = stintProcessor.getStint();
 						System.out.println("Yay, a stint completed!");
 					}
-
-				//code to run
-//				System.out.println("I'm running every second!");
 
 				lastSec = sec;
 			}
