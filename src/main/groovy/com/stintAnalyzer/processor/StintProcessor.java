@@ -9,18 +9,20 @@ import java.util.Objects;
 
 public class StintProcessor
 {
-	boolean stintInitialized;
+	int stintSize;
 	int lastCompletedLap;
 	Stint stint;
+	boolean stintInitialized;
 
 	public StintProcessor()
 	{
-		stintInitialized = false;
 		stint = new Stint();
+		stintInitialized = false;
 	}
 
 	public void initializeStint(Session session, LiveData liveData)
 	{
+		stintSize = 5;
 		lastCompletedLap = liveData.getCarStatus().getCars().get(session.getDriverInfo().getDriverCarIdx()).getCarIdxLapCompleted();
 		stint.setTrackName(session.getWeekendInfo().getTrackName());
 		stint.setSetupName(session.getDriverInfo().getDriverSetupName());
@@ -36,8 +38,6 @@ public class StintProcessor
 
 	public boolean progressStint(Session session, LiveData liveData)
 	{
-		int stintSize = 5;
-
 		// if track name or setup changed, refresh the stint
 		if (!Objects.equals(stint.getTrackName(), session.getWeekendInfo().getTrackName()) ||
 				!Objects.equals(stint.getSetupName(), session.getDriverInfo().getDriverSetupName()))
@@ -107,7 +107,7 @@ public class StintProcessor
 			initializeStint(session, liveData);
 		}
 		// stint process is caught up to the current lap
-		else
+		else // if (liveDataLastCompletedLap == lastCompletedLap)
 		{
 			System.out.println("liveDataLastCompletedLap == lastCompletedLap");
 			// if stint has 20 completed laps
