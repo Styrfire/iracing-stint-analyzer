@@ -2,11 +2,11 @@ package com.stintAnalyzer;
 
 import com.stintAnalyzer.dto.live.LiveData;
 import com.stintAnalyzer.dto.session.Session;
-import com.stintAnalyzer.dto.stint.Stint;
 import com.stintAnalyzer.processor.StintProcessor;
 import com.stintAnalyzer.service.GoogleSheetsService;
 import com.stintAnalyzer.ui.Console;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,19 +14,22 @@ import java.io.FileNotFoundException;
 import static com.stintAnalyzer.utils.Parser.parseLiveDataFile;
 import static com.stintAnalyzer.utils.Parser.parseSessionFile;
 
+@Service
 public class StintAnalyzer
 {
-//	@Value("${sessionStrFilePath}")
-//	String sesssionStrFilePath; // = "C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt"
-//	@Value("${liveStrFilePath}")
-//	String liveStrFilePath; // = "C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt"
+	@Value("${sessionStrFilePath}")
+	String sessionStrFilePath;
+	@Value("${liveStrFilePath}")
+	String liveStrFilePath;
 
-	public static void main(String[] args)
+	public StintAnalyzer()
 	{
-		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt");
-//		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr Example.txt");
-		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\liveStr.txt");
-//		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\liveStr Example.txt");
+	}
+
+	public void start()
+	{
+		File sessionStrFile = new File(sessionStrFilePath);
+		File liveStrFile = new File(liveStrFilePath);
 
 		// initialize file watchers
 		FileWatcher sessionStrFileWatcher;
