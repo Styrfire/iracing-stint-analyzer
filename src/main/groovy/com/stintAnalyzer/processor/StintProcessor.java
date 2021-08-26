@@ -9,11 +9,13 @@ import java.util.Objects;
 
 public class StintProcessor
 {
+	boolean stintInitialized;
 	int lastCompletedLap;
 	Stint stint;
 
 	public StintProcessor()
 	{
+		stintInitialized = false;
 		stint = new Stint();
 	}
 
@@ -23,7 +25,13 @@ public class StintProcessor
 		stint.setTrackName(session.getWeekendInfo().getTrackName());
 		stint.setSetupName(session.getDriverInfo().getDriverSetupName());
 		stint.setStintLapTimes(new ArrayList<>(20));
-		stint.setTires(session.getCarSetup().getTires());
+		if (session.getCarSetup() == null)
+			stintInitialized = false;
+		else
+		{
+			stint.setTires(session.getCarSetup().getTires());
+			stintInitialized = true;
+		}
 	}
 
 	public boolean progressStint(Session session, LiveData liveData)
@@ -42,7 +50,7 @@ public class StintProcessor
 		int liveDataLastCompletedLap = liveData.getCarStatus().getCars().get(session.getDriverInfo().getDriverCarIdx()).getCarIdxLapCompleted();
 		float liveDataLastLapTime = liveData.getCarStatus().getCars().get(session.getDriverInfo().getDriverCarIdx()).getCarIdxLastLapTime();
 
-		// new session has been started and a lap hasn't been completed yet
+		// new session has been started and a lap hasn't started yet
 		if (lastCompletedLap == -1)
 		{
 			lastCompletedLap = liveDataLastCompletedLap;
@@ -52,7 +60,7 @@ public class StintProcessor
 			{
 				// check to see if the tire wear has changed (indicating the user left the car or pitted) If so,
 				// update the tire treads and return true (the stint has completed)
-				if (!Objects.equals(stint.getTires(), session.getCarSetup().getTires()))
+				if (!stint.getTires().compareTo(session.getCarSetup().getTires()))
 				{
 					stint.setTires(session.getCarSetup().getTires());
 					return true;
@@ -74,7 +82,7 @@ public class StintProcessor
 			System.out.println("Exited the car last lap. Stint reset.");
 			initializeStint(session, liveData);
 		}
-		// user is out of the car
+		// user is out of the car and accessed the garage (entering the car will catch up the stint process)
 		else if (liveDataLastCompletedLap == -1)
 		{
 			System.out.println("liveDataLastCompletedLap == -1");
@@ -83,7 +91,7 @@ public class StintProcessor
 			{
 				// check to see if the tire wear has changed (indicating the user left the car or pitted) If so,
 				// update the tire treads and return true (the stint has completed)
-				if (!Objects.equals(stint.getTires(), session.getCarSetup().getTires()))
+				if (!stint.getTires().compareTo(session.getCarSetup().getTires()))
 				{
 					stint.setTires(session.getCarSetup().getTires());
 					return true;
@@ -91,6 +99,7 @@ public class StintProcessor
 			}
 		}
 		// if the lap is two or more laps ahead or one behind, reset the stint
+		// pretty sure this isn't needed
 		else if (liveDataLastCompletedLap != lastCompletedLap)
 		{
 			System.out.println("liveDataLastCompletedLap = " + liveDataLastCompletedLap + "\nlastCompletedLap = " + lastCompletedLap);
@@ -106,7 +115,7 @@ public class StintProcessor
 			{
 				// check to see if the tire wear has changed (indicating the user left the car or pitted) If so,
 				// update the tire treads and return true (the stint has completed)
-				if (!Objects.equals(stint.getTires(), session.getCarSetup().getTires()))
+				if (!stint.getTires().compareTo(session.getCarSetup().getTires()))
 				{
 					stint.setTires(session.getCarSetup().getTires());
 					return true;
@@ -121,5 +130,10 @@ public class StintProcessor
 	public Stint getStint()
 	{
 		return stint;
+	}
+
+	public boolean getStintInitialized()
+	{
+		return stintInitialized;
 	}
 }

@@ -51,17 +51,9 @@ public class StintAnalyzer
 		console.showConsole();
 
 		// get starting session and live data
+		StintProcessor stintProcessor = new StintProcessor();
 		Session currSession = parseSessionFile(sessionStrFile);
 		LiveData currLiveData = parseLiveDataFile(liveStrFile);
-		if (currSession == null || currLiveData == null)
-		{
-			System.out.println("Something went wrong parsing the files. Exiting");
-			System.exit(2);
-		}
-
-		// initialize the stint
-		StintProcessor stintProcessor = new StintProcessor();
-		stintProcessor.initializeStint(currSession, currLiveData);
 
 		// check for file updates and process the changes
 		long lastSec = 0;
@@ -89,13 +81,22 @@ public class StintAnalyzer
 				}
 
 				if (fileChanged)
-					if (stintProcessor.progressStint(currSession, currLiveData))
+				{
+					// check if stint is initialized. if not, initialize it
+					// throwing it in this loop because session data could cause some values to be null
+					// thus, failing the initialization, and then we'll have to try again
+					if (!stintProcessor.getStintInitialized())
+					{
+						System.out.println("Attempting stint initialization");
+						stintProcessor.initializeStint(currSession, currLiveData);
+					}
+					else if (stintProcessor.progressStint(currSession, currLiveData))
 					{
 						//update google with stintProcessor.getStint();
 						Stint stint = stintProcessor.getStint();
 						System.out.println("Yay, a stint completed!");
 					}
-
+				}
 				lastSec = sec;
 			}
 		}
