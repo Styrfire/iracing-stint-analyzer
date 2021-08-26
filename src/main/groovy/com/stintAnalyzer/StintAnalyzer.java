@@ -21,6 +21,8 @@ public class StintAnalyzer
 	String sessionStrFilePath;
 	@Value("${liveStrFilePath}")
 	String liveStrFilePath;
+	@Value("${spreadsheetID}")
+	String spreadsheetID;
 
 	public StintAnalyzer()
 	{
@@ -104,8 +106,16 @@ public class StintAnalyzer
 					else if (stintProcessor.progressStint(currSession, currLiveData))
 					{
 						System.out.println("Yay, a stint completed! Sending data to Google Spreadsheet!");
-						//update google with stintProcessor.getStint();
-						//googleSheetsService.sendStintDataToSpreadsheet(stintProcessor.getStint());
+						// send stint data to google spreadsheet
+						try
+						{
+							googleSheetsService.sendStintDataToSpreadsheet(stintProcessor.getStint(), spreadsheetID);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+							System.out.println("There was an issue sending the stint data to the google spreadsheet! :O");
+						}
 					}
 				}
 				lastSec = sec;

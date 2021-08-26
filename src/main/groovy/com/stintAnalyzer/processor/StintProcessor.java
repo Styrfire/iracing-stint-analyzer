@@ -63,6 +63,7 @@ public class StintProcessor
 				if (!stint.getTires().compareTo(session.getCarSetup().getTires()))
 				{
 					stint.setTires(session.getCarSetup().getTires());
+					stint.setStintCompletedTimestamp(System.currentTimeMillis());
 					return true;
 				}
 			}
@@ -94,6 +95,7 @@ public class StintProcessor
 				if (!stint.getTires().compareTo(session.getCarSetup().getTires()))
 				{
 					stint.setTires(session.getCarSetup().getTires());
+					stint.setStintCompletedTimestamp(System.currentTimeMillis());
 					return true;
 				}
 			}
@@ -118,6 +120,7 @@ public class StintProcessor
 				if (!stint.getTires().compareTo(session.getCarSetup().getTires()))
 				{
 					stint.setTires(session.getCarSetup().getTires());
+					stint.setStintCompletedTimestamp(System.currentTimeMillis());
 					return true;
 				}
 			}

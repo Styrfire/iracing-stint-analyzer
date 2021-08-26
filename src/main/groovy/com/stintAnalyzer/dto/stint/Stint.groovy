@@ -8,6 +8,7 @@ class Stint
 	String setupName
 	List<Float> stintLapTimes
 	Tires tires
+	Long stintCompletedTimestamp
 
 	Stint()
 	{
@@ -15,5 +16,6 @@ class Stint
 		setupName = null
 		stintLapTimes = new ArrayList<>(20)
 		tires = null
+		stintCompletedTimestamp = null
 	}
 }
