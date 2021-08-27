@@ -8,6 +8,7 @@ import com.stintAnalyzer.ui.Console;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -21,11 +22,15 @@ public class StintAnalyzer
 	String sessionStrFilePath;
 	@Value("${liveStrFilePath}")
 	String liveStrFilePath;
-	@Value("${spreadsheetID}")
-	String spreadsheetID;
+	@Value("${spreadsheetId}")
+	String spreadsheetId;
 
-	public StintAnalyzer()
+	StintProcessor stintProcessor;
+
+	@Inject
+	public StintAnalyzer(StintProcessor stintProcessor)
 	{
+		this.stintProcessor = stintProcessor;
 	}
 
 	public void start()
@@ -64,7 +69,6 @@ public class StintAnalyzer
 		console.showConsole();
 
 		// get starting session and live data
-		StintProcessor stintProcessor = new StintProcessor();
 		Session currSession = parseSessionFile(sessionStrFile);
 		LiveData currLiveData = parseLiveDataFile(liveStrFile);
 
@@ -109,7 +113,10 @@ public class StintAnalyzer
 						// send stint data to google spreadsheet
 						try
 						{
-							googleSheetsService.sendStintDataToSpreadsheet(stintProcessor.getStint(), spreadsheetID);
+							googleSheetsService.sendStintDataToSpreadsheet(stintProcessor.getStint(), spreadsheetId);
+							System.out.println("Setting stint to not initialized after stint completion!");
+							stintProcessor.setStintInitialized(false);
+
 						}
 						catch (Exception e)
 						{

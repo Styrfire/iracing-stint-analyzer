@@ -157,12 +157,16 @@ public class GoogleSheetsService
 				// get current column letter
 				String column = String.valueOf("ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(i));
 
-				// get cell values and fill up to 21 with empty
+				// get cell values and fill up to 23 with empty
 				List<Object> cellValues = new ArrayList<>();
 				cellValues.add(stint.getSetupName());
 				cellValues.addAll(stint.getStintLapTimes());
-				for (int j = cellValues.size(); j < 21; j++)
+				for (int j = cellValues.size(); j < 23; j++)
 					cellValues.add("");
+				cellValues.add(stint.getTires().getLeftFront().getTreadRemaining());
+				cellValues.add(stint.getTires().getRightFront().getTreadRemaining());
+				cellValues.add(stint.getTires().getLeftRear().getTreadRemaining());
+				cellValues.add(stint.getTires().getRightRear().getTreadRemaining());
 
 				// add cell values to 2d value array
 				List<List<Object>> values = new ArrayList<>();
@@ -178,8 +182,9 @@ public class GoogleSheetsService
 				valueRange.setValues(values);
 				Sheets.Spreadsheets.Values.Update request = sheetsService.spreadsheets().values()
 						.update(spreadsheet.getSpreadsheetId(),
-								"'" + trackSheet.getProperties().getTitle() + "'!" + column + "2:" + column + "22", valueRange);
+								"'" + trackSheet.getProperties().getTitle() + "'!" + column + "2:" + column + "28", valueRange);
 				request.setValueInputOption("RAW").execute();
+				System.out.println("Added sprint on column " + column + " in the " + stint.getTrackName() + " sheet!");
 
 				foundEmptyRow = true;
 				break;

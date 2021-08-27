@@ -3,12 +3,16 @@ package com.stintAnalyzer.processor;
 import com.stintAnalyzer.dto.live.LiveData;
 import com.stintAnalyzer.dto.session.Session;
 import com.stintAnalyzer.dto.stint.Stint;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
+@Component
 public class StintProcessor
 {
+	@Value("${stintSize}")
 	int stintSize;
 	int lastCompletedLap;
 	Stint stint;
@@ -138,5 +142,10 @@ public class StintProcessor
 	public boolean getStintInitialized()
 	{
 		return stintInitialized;
+	}
+
+	public void setStintInitialized(boolean stintInitialized)
+	{
+		this.stintInitialized = stintInitialized;
 	}
 }
