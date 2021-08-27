@@ -20,10 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class GoogleSheetsService
 {
@@ -66,11 +63,6 @@ public class GoogleSheetsService
 		return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
 	}
 
-	public Sheets getSheetsService()
-	{
-		return sheetsService;
-	}
-
 	public void sendStintDataToSpreadsheet(Stint stint, String spreadsheetId) throws Exception
 	{
 		Spreadsheet spreadsheet = sheetsService.spreadsheets().get(spreadsheetId).execute();
@@ -99,7 +91,7 @@ public class GoogleSheetsService
 			throw new Exception("baseSheet = null");
 		}
 
-		System.out.println("Found existing track sheet!");
+		System.out.println("Created new track sheet!");
 		CopySheetToAnotherSpreadsheetRequest copySheetRequestBody = new CopySheetToAnotherSpreadsheetRequest();
 		copySheetRequestBody.setDestinationSpreadsheetId(spreadsheet.getSpreadsheetId());
 		SheetProperties sheetProperties = sheetsService.spreadsheets().sheets().copyTo(spreadsheet.getSpreadsheetId(), baseSheet.getProperties().getSheetId(), copySheetRequestBody).execute();
@@ -145,7 +137,59 @@ public class GoogleSheetsService
 		return null;
 	}
 
-	private void updateTrackSheetLapTimes(Stint stint, Spreadsheet spreadsheet, Sheet trackSheet)
+	// if an empty column is available, use that for the stint, else return false
+	private void updateTrackSheetLapTimes(Stint stint, Spreadsheet spreadsheet, Sheet trackSheet) throws Exception
 	{
+		boolean foundEmptyRow = false;
+
+		// get grid data
+		Spreadsheet spreadsheetWithGrid = sheetsService.spreadsheets().get(spreadsheet.getSpreadsheetId())
+				.setIncludeGridData(true).execute();
+		List<GridData> gridData = spreadsheetWithGrid.getSheets().get(trackSheet.getProperties().getIndex()).getData();
+
+		// get row B2:I2
+		RowData rowB2ToI2 = gridData.get(0).getRowData().get(1);
+		for (int i = 1; i < rowB2ToI2.getValues().size(); i++)
+		{
+			// if this column is free, update its data!
+			if (rowB2ToI2.getValues().get(i).getEffectiveValue() == null)
+			{
+				// get current column letter
+				String column = String.valueOf("ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(i));
+
+				// get cell values and fill up to 21 with empty
+				List<Object> cellValues = new ArrayList<>();
+				cellValues.add(stint.getSetupName());
+				cellValues.addAll(stint.getStintLapTimes());
+				for (int j = cellValues.size(); j < 21; j++)
+					cellValues.add("");
+
+				// add cell values to 2d value array
+				List<List<Object>> values = new ArrayList<>();
+				for (Object cellValue : cellValues)
+				{
+					List<Object> item = new ArrayList<>();
+					item.add(cellValue);
+					values.add(item);
+				}
+
+				// shove the data in the spreadsheet at the appropriate column
+				ValueRange valueRange = new ValueRange();
+				valueRange.setValues(values);
+				Sheets.Spreadsheets.Values.Update request = sheetsService.spreadsheets().values()
+						.update(spreadsheet.getSpreadsheetId(),
+								"'" + trackSheet.getProperties().getTitle() + "'!" + column + "2:" + column + "22", valueRange);
+				request.setValueInputOption("RAW").execute();
+
+				foundEmptyRow = true;
+				break;
+			}
+		}
+
+		if (!foundEmptyRow)
+		{
+			System.out.println("There was not a free row to put the data! Make more space on the spreadsheet!");
+			throw new Exception("There was not a free row to put the data! Make more space on the spreadsheet!");
+		}
 	}
 }
