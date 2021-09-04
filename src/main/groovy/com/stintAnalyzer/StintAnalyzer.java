@@ -2,40 +2,45 @@ package com.stintAnalyzer;
 
 import com.stintAnalyzer.dto.live.LiveData;
 import com.stintAnalyzer.dto.session.Session;
-import com.stintAnalyzer.dto.stint.Stint;
 import com.stintAnalyzer.processor.StintProcessor;
+import com.stintAnalyzer.service.GoogleSheetsService;
 import com.stintAnalyzer.ui.Console;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-import javax.swing.*;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
 
 import static com.stintAnalyzer.utils.Parser.parseLiveDataFile;
 import static com.stintAnalyzer.utils.Parser.parseSessionFile;
 
+@Service
 public class StintAnalyzer
 {
-//	@Value("${sessionStrFilePath}")
-//	String sesssionStrFilePath; // = "C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt"
-//	@Value("${liveStrFilePath}")
-//	String liveStrFilePath; // = "C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt"
+	@Value("${sessionStrFilePath}")
+	String sessionStrFilePath;
+	@Value("${liveStrFilePath}")
+	String liveStrFilePath;
+	@Value("${spreadsheetId}")
+	String spreadsheetId;
 
-	public static void main(String[] args)
+	StintProcessor stintProcessor;
+
+	@Inject
+	public StintAnalyzer(StintProcessor stintProcessor)
 	{
-		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr.txt");
-//		File sessionStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\sessionStr Example.txt");
-		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\liveStr.txt");
-//		File liveStrFile = new File("C:\\Users\\g_n_r\\source\\repos\\irsdk\\irsdk_lapTiming\\liveStr Example.txt");
+		this.stintProcessor = stintProcessor;
+	}
+
+	public void start()
+	{
+		File sessionStrFile = new File(sessionStrFilePath);
+		File liveStrFile = new File(liveStrFilePath);
+
+		// initialize file watchers
 		FileWatcher sessionStrFileWatcher;
 		FileWatcher liveStrFileWatcher;
-
 		try
 		{
 			sessionStrFileWatcher = new FileWatcher(sessionStrFile);
@@ -47,11 +52,23 @@ public class StintAnalyzer
 			return;
 		}
 
+		// initialize Google spreadsheet service
+		GoogleSheetsService googleSheetsService;
+		try
+		{
+			googleSheetsService = new GoogleSheetsService();
+		}
+		catch (Exception e)
+		{
+			System.out.println("Something went wrong initializing the Google spreadsheet service!");
+			e.printStackTrace();
+			return;
+		}
+
 		Console console = new Console();
 		console.showConsole();
 
 		// get starting session and live data
-		StintProcessor stintProcessor = new StintProcessor();
 		Session currSession = parseSessionFile(sessionStrFile);
 		LiveData currLiveData = parseLiveDataFile(liveStrFile);
 
@@ -92,9 +109,20 @@ public class StintAnalyzer
 					}
 					else if (stintProcessor.progressStint(currSession, currLiveData))
 					{
-						//update google with stintProcessor.getStint();
-						Stint stint = stintProcessor.getStint();
-						System.out.println("Yay, a stint completed!");
+						System.out.println("Yay, a stint completed! Sending data to Google Spreadsheet!");
+						// send stint data to google spreadsheet
+						try
+						{
+							googleSheetsService.sendStintDataToSpreadsheet(stintProcessor.getStint(), spreadsheetId);
+							System.out.println("Setting stint to not initialized after stint completion!");
+							stintProcessor.setStintInitialized(false);
+
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+							System.out.println("There was an issue sending the stint data to the google spreadsheet! :O");
+						}
 					}
 				}
 				lastSec = sec;
