@@ -122,6 +122,7 @@ public class StintAnalyzer
 						{
 							e.printStackTrace();
 							System.out.println("There was an issue sending the stint data to the google spreadsheet! :O");
+							stintProcessor.setStintInitialized(false);
 						}
 					}
 				}
