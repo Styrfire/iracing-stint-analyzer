@@ -44,7 +44,7 @@ public class GoogleSheetsApiTester
 		RightFront rightFront = new RightFront();
 		rightFront.setColdPressure("152 kPa");
 		rightFront.setLastHotPressure("152 kPa");
-		rightFront.setLastTempsOMI("172c, 167c, 152c");
+		rightFront.setLastTempsIMO("172c, 167c, 152c");
 		rightFront.setTreadRemaining("89%, 89%, 92%");
 		tires.setRightFront(rightFront);
 		LeftRear leftRear = new LeftRear();
@@ -56,7 +56,7 @@ public class GoogleSheetsApiTester
 		RightRear rightRear = new RightRear();
 		rightRear.setColdPressure("152 kPa");
 		rightRear.setLastHotPressure("152 kPa");
-		rightRear.setLastTempsOMI("176c, 168c, 153c");
+		rightRear.setLastTempsIMO("176c, 168c, 153c");
 		rightRear.setTreadRemaining("88%, 89%, 92%");
 		tires.setRightRear(rightRear);
 		stint.setTires(tires);

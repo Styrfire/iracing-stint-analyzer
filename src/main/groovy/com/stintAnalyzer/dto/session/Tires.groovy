@@ -16,7 +16,7 @@ class Tires
 				Objects.equals(leftFront.getTreadRemaining(), tires.leftFront.getTreadRemaining()) &&
 				Objects.equals(rightFront.getColdPressure(), tires.rightFront.getColdPressure()) &&
 				Objects.equals(rightFront.getLastHotPressure(), tires.rightFront.getLastHotPressure()) &&
-				Objects.equals(rightFront.getLastTempsOMI(), tires.rightFront.getLastTempsOMI()) &&
+				Objects.equals(rightFront.getLastTempsIMO(), tires.rightFront.getLastTempsIMO()) &&
 				Objects.equals(rightFront.getTreadRemaining(), tires.rightFront.getTreadRemaining()) &&
 				Objects.equals(leftRear.getColdPressure(), tires.leftRear.getColdPressure()) &&
 				Objects.equals(leftRear.getLastHotPressure(), tires.leftRear.getLastHotPressure()) &&
@@ -24,7 +24,7 @@ class Tires
 				Objects.equals(leftRear.getTreadRemaining(), tires.leftRear.getTreadRemaining()) &&
 				Objects.equals(rightRear.getColdPressure(), tires.rightRear.getColdPressure()) &&
 				Objects.equals(rightRear.getLastHotPressure(), tires.rightRear.getLastHotPressure()) &&
-				Objects.equals(rightRear.getLastTempsOMI(), tires.rightRear.getLastTempsOMI()) &&
+				Objects.equals(rightRear.getLastTempsIMO(), tires.rightRear.getLastTempsIMO()) &&
 				Objects.equals(rightRear.getTreadRemaining(), tires.rightRear.getTreadRemaining())
 	}
 }

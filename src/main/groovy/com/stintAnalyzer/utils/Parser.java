@@ -16,18 +16,25 @@ public class Parser
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		Session session;
+		Session session = null;
 
-		try
-		{
-			session = mapper.readValue(file, Session.class);
+		int tries = 0;
+		int maxRetryAttempts = 3;
+		do {
+			try
+			{
+				session = mapper.readValue(file, Session.class);
+				break;
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				System.out.println("Something went wrong parsing the session file!");
+				tries++;
+				System.out.println("Retry attempt " + tries + " of " + maxRetryAttempts);
+			}
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.out.println("Something went wrong parsing the session file!");
-			return null;
-		}
+		while (tries <= maxRetryAttempts);
 
 		return session;
 	}
@@ -39,7 +46,7 @@ public class Parser
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		LiveData liveData = null;
 
-		int tries = 1;
+		int tries = 0;
 		int maxRetryAttempts = 3;
 		do {
 			try
@@ -51,8 +58,8 @@ public class Parser
 			{
 				e.printStackTrace();
 				System.out.println("Something went wrong parsing the session file!");
-				System.out.println("Retry attempt " + tries + " of " + maxRetryAttempts);
 				tries++;
+				System.out.println("Retry attempt " + tries + " of " + maxRetryAttempts);
 			}
 		}
 		while (tries <= maxRetryAttempts);

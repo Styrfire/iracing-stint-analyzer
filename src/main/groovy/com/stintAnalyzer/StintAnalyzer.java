@@ -35,6 +35,8 @@ public class StintAnalyzer
 
 	public void start()
 	{
+		System.out.println("sessionStr File Path: " + sessionStrFilePath);
+		System.out.println("liveStr File Path: " + liveStrFilePath);
 		File sessionStrFile = new File(sessionStrFilePath);
 		File liveStrFile = new File(liveStrFilePath);
 
@@ -69,10 +71,12 @@ public class StintAnalyzer
 		console.showConsole();
 
 		// get starting session and live data
+		System.out.println("Getting starting session and live data");
 		Session currSession = parseSessionFile(sessionStrFile);
 		LiveData currLiveData = parseLiveDataFile(liveStrFile);
 
 		// check for file updates and process the changes
+		System.out.println("Starting check for file changes and progress stint loop");
 		long lastSec = 0;
 		while (true)
 		{

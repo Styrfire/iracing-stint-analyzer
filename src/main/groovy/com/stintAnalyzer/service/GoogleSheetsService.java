@@ -65,6 +65,8 @@ public class GoogleSheetsService
 
 	public void sendStintDataToSpreadsheet(Stint stint, String spreadsheetId) throws Exception
 	{
+		System.out.println("Stint Data:\n\n" + stint);
+
 		Spreadsheet spreadsheet = sheetsService.spreadsheets().get(spreadsheetId).execute();
 		List<Sheet> sheets = spreadsheet.getSheets();
 
@@ -196,11 +198,11 @@ public class GoogleSheetsService
 				List<List<Object>> cellValuesTires = new ArrayList<>();
 				List<Object> leftRightTires = new ArrayList<>();
 				leftRightTires.add(stint.getTires().getLeftFront().getLastTempsOMI());
-				leftRightTires.add(stint.getTires().getRightFront().getLastTempsOMI());
+				leftRightTires.add(stint.getTires().getRightFront().getLastTempsIMO());
 				cellValuesTires.add(leftRightTires);
 				leftRightTires = new ArrayList<>();
 				leftRightTires.add(stint.getTires().getLeftRear().getLastTempsOMI());
-				leftRightTires.add(stint.getTires().getRightRear().getLastTempsOMI());
+				leftRightTires.add(stint.getTires().getRightRear().getLastTempsIMO());
 				cellValuesTires.add(leftRightTires);
 				leftRightTires = new ArrayList<>();
 				leftRightTires.add(stint.getTires().getLeftFront().getTreadRemaining());
